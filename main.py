@@ -6,6 +6,8 @@ import time
 import requests
 from discord.ext import commands
 
+import random
+
 def openn():
     global Q, C
     Q = []
@@ -21,22 +23,29 @@ def openn():
     C = text[2]
     Q = Q.split(",")
     C = C.split(",")
-    print(Q)
-    print(C)
+    #print(Q)
+    #print(C)
     openn.close()
     return TOKEN ,Q ,C
 
 def saves():
+    global C, Q, TOKEN
     saves = open("savesBotNM.txt", "w+")
     text_Q = ''
     text_C = ''
     for text in Q:
-      text_Q = text_Q+','+str(text)
+        if text == Q[0]:
+            text_Q = text_Q+str(text)
+        else:
+            text_Q = text_Q+','+str(text)
     for text in C:
-      text_C = text_C+','+str(text)
-    print(text_Q)
-    print(text_C)
-    saves.write(str(Q)+"#...#"+str(C))
+        if text == C[0]:
+            text_C = text_C+str(text)
+        else:
+            text_C = text_C+','+str(text)
+    Q = str(text_Q)
+    C = str(text_C)
+    saves.write(TOKEN+'#...#'+str(Q)+"#...#"+str(C))
     saves.close()
 
 TOKEN, Q, C= openn()
@@ -73,9 +82,9 @@ async def blague(channel, message):
 
 @bot.command()
 async def learnblague(channel, question, reponse):
+    global Q, C
     await channel.send("Apprentissage de la blague !")
-    print(question)
-    print(reponse)
+    print(question + 'yo' + reponse)
     Q.append(question)
     C.append(reponse)
     saves()
@@ -83,12 +92,13 @@ async def learnblague(channel, question, reponse):
 
 @bot.command()
 async def blague_apprise(channel):
-  Q, C = openn()
-  max_Q = len(Q[0])
+  TOKEN, Q, C = openn()
+  max_Q = len(Q)-1
   alea = random.randint(0,max_Q)
-  await channel.send(Q[0][alea] + ":smirk:\n" + "||" + C[0][alea] + " :sweat_smile: ||")
+  #print(max_Q,'\n',alea)
+  await channel.send(Q[alea] + ":smirk:\n" + "||" + C[alea] + " :sweat_smile: ||")
 
 try:
     bot.run(TOKEN)
 except ImportError:
-    print("ne faite pas รงa !!!!!!")
+    print("ne faite pas ca !!!!!!")
